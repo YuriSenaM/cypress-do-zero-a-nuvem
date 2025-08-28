@@ -1,4 +1,5 @@
-  it('verifica o título da pagina', () => {
+Cypress._.times(3,() =>{
+    it('verifica o título da pagina', () => {
     cy.visit('./src/privacy.html')
     cy.title().should('be.equal', 'Central de Atendimento ao Cliente TAT - Política de Privacidade')
   })
@@ -10,3 +11,5 @@
 
     
   })  
+
+})

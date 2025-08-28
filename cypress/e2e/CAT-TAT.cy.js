@@ -8,7 +8,10 @@ describe('Central de Atendimento ao Cliente TAT', () => {
   })
 
   it('preenche os campos obrigatórios e envia o formulário', () => {
+    cy.clock()
+
     const longtext = Cypress._.repeat('adcdefghijklmnopqrstuvwxyz', 10)
+    
     cy.get('#firstName')
       .type('yuri')
     cy.get('#firstName')
@@ -36,6 +39,8 @@ describe('Central de Atendimento ao Cliente TAT', () => {
 
     cy.get('.button[type="submit"]').click()
     cy.get('.success').should('be.visible')
+    cy.tick(3000)
+    cy.get('.success').should('not.be.visible')
   })
 
   it('exibe mensagem de erro ao submeter o formulário com um email com formatação inválida', () => {
@@ -264,7 +269,6 @@ it('seleciona um produto (Mentoria) por seu valor (value)', () => {
 
   })
 
-
   it('marca ambos checkboxes, depois desmarca o último', () => {
     
     cy.get('#check input[type="checkbox"]')
@@ -331,6 +335,44 @@ it('seleciona um produto (Mentoria) por seu valor (value)', () => {
       .click()
     cy.contains('h1', 'CAC TAT - Política de Privacidade').should('be.visible')
   })  
-    
+  it('exibe e oculta as mensagens de sucesso e erro usando .invoke()', () => {
+    cy.get('.success')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Mensagem enviada com sucesso.')
+      .invoke('hide')
+      .should('not.be.visible')
+    cy.get('.error')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Valide os campos obrigatórios!')
+      .invoke('hide')
+      .should('not.be.visible')
+  })
 
+  it('preenche o campo da área de texto usando o comando invoke',() =>{
+    cy.get('#open-text-area').invoke('val', 'um texto qualquer')
+      .should('have.value', 'um texto qualquer')
+  })
+  it('faz uma requisição HTTP',() =>{
+    cy.request('https://cac-tat-v3.s3.eu-central-1.amazonaws.com/index.html')
+      .as('getResquest')
+      .its('status')
+      .should('be.equal', 200)
+    cy.get('@getResquest')
+      .its('statusText')
+      .should('be.equal', 'OK')
+    cy.get('@getResquest')
+      .its('body')
+      .should('include', 'CAC TAT')
+  })
+  
+  it.only('exibe o gato escondido', () => {
+    cy.get('#cat')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+  })
 })
